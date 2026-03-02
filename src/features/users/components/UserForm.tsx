@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import type { FormEvent } from "react";
 import { useAddUser, useUpdateUser } from "../hooks/useFetchUsers";
 import type { User } from "../userSlice";
@@ -15,18 +15,17 @@ export default function UserForm({ initialData, onSaved }: Props) {
   const addMutation = useAddUser();
   const updateMutation = useUpdateUser();
 
-  // synchronize form fields when the `initialData` prop changes
-  // we derive state from the initialData prop instead of using an effect
-  if (
-    initialData &&
-    (name !== initialData.name || email !== initialData.email)
-  ) {
-    setName(initialData.name);
-    setEmail(initialData.email || "");
-  } else if (!initialData && (name !== "" || email !== "")) {
-    setName("");
-    setEmail("");
-  }
+  // when initialData changes (start editing or cancel), update form fields
+  // useLayoutEffect to avoid warning about synchronous setState causing cascading renders
+  useLayoutEffect(() => {
+    if (initialData) {
+      setName(initialData.name);
+      setEmail(initialData.email || "");
+    } else {
+      setName("");
+      setEmail("");
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
