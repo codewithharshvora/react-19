@@ -11,8 +11,8 @@ vi.mock("../../hooks/useFetchUsers", () => ({
   useUpdateUser: () => mockUpdate,
 }));
 
-// helper to flush pending promises
-const flushPromises = () => new Promise(setImmediate);
+// helper to flush pending promises (unused in current tests)
+// const flushPromises = () => new Promise(setImmediate);
 
 describe("UserForm component", () => {
   beforeEach(() => {

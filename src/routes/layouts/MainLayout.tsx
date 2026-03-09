@@ -1,4 +1,5 @@
 // ReactNode not needed here
+// This layout is wrapped by <ErrorBoundary> at router level to catch render errors.
 import { Outlet, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";

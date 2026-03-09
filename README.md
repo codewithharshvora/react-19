@@ -104,11 +104,16 @@ This organization makes it easy to add new features (auth, users, posts, etc.) w
 - **User management**: fetch list, add/delete users via JSONPlaceholder, CRUD reducers and mutations, UI form in `/users`
 - **Posts placeholder**: scaffold awaiting implementation
 - **Routing**: `react-router-dom` with `AppRouter`, layouts, protected routes
+- **Error handling**: top‑level `ErrorBoundary` component wraps layouts and can integrate with
+  external reporting services (Sentry, etc.) for production
 - **Styling**: Tailwind CSS with configurable `tailwind.config.js` theme colors
 
 ### Getting started
 
 1. Run `npm install` to grab dependencies (including `react-router-dom`, `tailwindcss`, `postcss`, `autoprefixer`).
+   - There is also an `npm run analyze` script that builds the app with
+     `rollup-plugin-visualizer` enabled; open `dist/bundle-analysis.html` to see a
+     breakdown of bundle sizes.
 2. Start dev server: `npm run dev`.
 3. Authentication credentials are hard‑coded; after login you land on `/users` and can add or delete.
 

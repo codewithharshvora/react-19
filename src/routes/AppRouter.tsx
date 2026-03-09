@@ -5,10 +5,15 @@ import ProtectedRoute from "./protected/ProtectedRoute";
 import Login from "../features/auth/components/Login";
 import UsersPage from "../features/users/components/UsersPage";
 import PostsPage from "../features/posts/components/PostsPage";
+import ErrorBoundary from "../shared/ErrorBoundary";
 
 const router = createBrowserRouter([
   {
-    element: <MinimalLayout />,
+    element: (
+      <ErrorBoundary>
+        <MinimalLayout />
+      </ErrorBoundary>
+    ),
     children: [
       { path: "/", element: <Login /> },
       { path: "/login", element: <Login /> },
@@ -16,7 +21,11 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <MainLayout />,
+    element: (
+      <ErrorBoundary>
+        <MainLayout />
+      </ErrorBoundary>
+    ),
     children: [
       {
         element: <ProtectedRoute />,

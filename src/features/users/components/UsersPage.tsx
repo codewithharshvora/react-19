@@ -19,7 +19,10 @@ export default function UsersPage() {
   return (
     <div className="p-4">
       <h1 className="text-2xl mb-4">Users</h1>
-      <UserForm initialData={editing || undefined} onSaved={() => setEditing(null)} />
+      <UserForm
+        initialData={editing || undefined}
+        onSaved={() => setEditing(null)}
+      />
       <UserList onEdit={(u) => setEditing(u)} />
     </div>
   );

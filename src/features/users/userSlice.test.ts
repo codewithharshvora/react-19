@@ -3,8 +3,8 @@ import usersReducer, {
   removeUser,
   updateUser,
   setUsers,
-  User,
 } from "./userSlice";
+import type { User } from "./userSlice";
 
 describe("users slice reducers", () => {
   const initialState = { list: [] };
