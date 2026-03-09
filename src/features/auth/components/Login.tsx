@@ -2,6 +2,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useLogin } from "../hooks/useAuth";
+import { FormInput, FormButton } from "../../../shared/components";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -29,30 +30,27 @@ export default function Login() {
         <p className="text-red-500">{mutation.error?.message}</p>
       )}
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div>
-          <label className="block">Username</label>
-          <input
-            className="w-full border p-1"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block">Password</label>
-          <input
-            type="password"
-            className="w-full border p-1"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button
+        <FormInput
+          label="Username"
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <FormInput
+          label="Password"
+          name="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <FormButton
           type="submit"
-          className="bg-primary text-white px-4 py-2 rounded"
-          disabled={mutation.status === "pending"}
+          variant="primary"
+          isLoading={mutation.status === "pending"}
+          loadingText="Logging in…"
         >
-          {mutation.status === "pending" ? "Logging in…" : "Login"}
-        </button>
+          Login
+        </FormButton>
       </form>
     </div>
   );
