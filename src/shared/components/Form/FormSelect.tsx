@@ -4,6 +4,9 @@ interface FormSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   name: string;
   options: Array<{ value: string | number; label: string }>;
+  error?: string;
+  onErrorClear?: () => void;
+  isRequired?: boolean;
 }
 
 export default function FormSelect({
@@ -11,17 +14,42 @@ export default function FormSelect({
   name,
   options,
   className,
+  error,
+  required,
+  onChange,
+  onErrorClear,
+  isRequired,
   ...props
 }: FormSelectProps) {
   const baseClasses = "w-full border p-1";
-  const combinedClasses = className
-    ? `${baseClasses} ${className}`
-    : baseClasses;
+  const errorClasses = error ? "border-red-500" : "";
+  const combinedClasses = `${baseClasses} ${errorClasses} ${className || ""}`;
+
+  const showAsterisk =
+    required || isRequired || (error && error.includes("required"));
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (error && onErrorClear) {
+      onErrorClear();
+    }
+    onChange?.(e);
+  };
 
   return (
     <div>
-      {label && <label className="block mb-1">{label}</label>}
-      <select name={name} className={combinedClasses} {...props}>
+      {label && (
+        <label className="block mb-1">
+          {label}
+          {showAsterisk && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
+      <select
+        name={name}
+        className={combinedClasses}
+        required={required}
+        onChange={handleChange}
+        {...props}
+      >
         <option value="">Select...</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -29,6 +57,7 @@ export default function FormSelect({
           </option>
         ))}
       </select>
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
 }

@@ -1,20 +1,29 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useLogin } from "../hooks/useAuth";
 import { FormInput, FormButton } from "../../../shared/components";
+import { useFormValidation } from "../../../shared/hooks";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
   const mutation = useLogin();
+
+  const { formData, errors, setFieldValue, clearFieldError, validateForm } =
+    useFormValidation(
+      { username: "", password: "" },
+      {
+        username: { required: true },
+        password: { required: true },
+      },
+    );
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     mutation.mutate(
-      { username, password },
+      { username: formData.username, password: formData.password },
       {
         onSuccess: () => {
           navigate("/users");
@@ -33,15 +42,21 @@ export default function Login() {
         <FormInput
           label="Username"
           name="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={formData.username}
+          onChange={(e) => setFieldValue("username", e.target.value)}
+          error={errors.username}
+          onErrorClear={() => clearFieldError("username")}
+          isRequired
         />
         <FormInput
           label="Password"
           name="password"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={(e) => setFieldValue("password", e.target.value)}
+          error={errors.password}
+          onErrorClear={() => clearFieldError("password")}
+          isRequired
         />
         <FormButton
           type="submit"

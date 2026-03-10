@@ -1,8 +1,8 @@
-import { useState, useLayoutEffect } from "react";
-import type { FormEvent } from "react";
+import { useLayoutEffect, type FormEvent } from "react";
 import { useAddUser, useUpdateUser } from "../hooks/useFetchUsers";
 import type { User } from "../userSlice";
 import { FormInput, FormButton } from "../../../shared/components";
+import { useFormValidation } from "../../../shared/hooks";
 
 interface Props {
   initialData?: User;
@@ -10,29 +10,42 @@ interface Props {
 }
 
 export default function UserForm({ initialData, onSaved }: Props) {
-  const [name, setName] = useState(initialData?.name ?? "");
-  const [email, setEmail] = useState(initialData?.email ?? "");
-
   const addMutation = useAddUser();
   const updateMutation = useUpdateUser();
+
+  const {
+    formData,
+    errors,
+    setFormData,
+    setFieldValue,
+    clearFieldError,
+    validateForm,
+  } = useFormValidation(
+    { name: "", email: "" },
+    {
+      name: { required: true },
+      email: { required: true },
+    },
+  );
 
   // when initialData changes (start editing or cancel), update form fields
   // useLayoutEffect to avoid warning about synchronous setState causing cascading renders
   useLayoutEffect(() => {
     if (initialData) {
-      setName(initialData.name);
-      setEmail(initialData.email || "");
+      setFormData({ name: initialData.name, email: initialData.email || "" });
     } else {
-      setName("");
-      setEmail("");
+      setFormData({ name: "", email: "" });
     }
   }, [initialData]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     if (initialData) {
       updateMutation.mutate(
-        { ...initialData, name, email },
+        { ...initialData, name: formData.name, email: formData.email },
         {
           onSuccess: () => {
             onSaved && onSaved();
@@ -41,7 +54,7 @@ export default function UserForm({ initialData, onSaved }: Props) {
       );
     } else {
       addMutation.mutate(
-        { name, email },
+        { name: formData.name, email: formData.email },
         {
           onSuccess: () => {
             onSaved && onSaved();
@@ -62,16 +75,22 @@ export default function UserForm({ initialData, onSaved }: Props) {
           label="Name"
           name="name"
           placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={formData.name}
+          onChange={(e) => setFieldValue("name", e.target.value)}
+          error={errors.name}
+          onErrorClear={() => clearFieldError("name")}
+          isRequired
         />
         <FormInput
           label="Email"
           name="email"
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={(e) => setFieldValue("email", e.target.value)}
+          error={errors.email}
+          onErrorClear={() => clearFieldError("email")}
+          isRequired
         />
       </div>
       <div className="flex gap-2">
